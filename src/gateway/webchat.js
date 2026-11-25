@@ -49,7 +49,8 @@ export class WebChatChannel {
 
     // 公開サーバー用の鍵: VISIONONE_BASIC_USER/PASSWORD を設定すると
     // ブラウザの標準的なログイン画面で保護される(未設定なら認証なし)
-    if (!this.checkBasicAuth(req)) {
+    // 例外: /api/health はBaseの死活監視(Render等)が叩くため認証を通す
+    if (url.pathname !== "/api/health" && !this.checkBasicAuth(req)) {
       res.writeHead(401, { "www-authenticate": 'Basic realm="VisionOne"' });
       res.end("Authentication required");
       return;

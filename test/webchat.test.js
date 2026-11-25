@@ -38,7 +38,10 @@ test("認証情報未設定なら従来どおり認証なしで使える", async
 test("Basic認証設定時: 認証なしは401、正しい認証情報なら通る", async () => {
   const { dir, channel, url } = await boot({ basicUser: "me", basicPassword: "secret" });
   try {
-    const noAuth = await fetch(`${url}/api/health`);
+    const health = await fetch(`${url}/api/health`);
+    assert.equal(health.status, 200); // 死活監視(Render等)のため認証を通す
+
+    const noAuth = await fetch(`${url}/api/state`);
     assert.equal(noAuth.status, 401);
     assert.match(noAuth.headers.get("www-authenticate"), /Basic/);
 
@@ -48,7 +51,7 @@ test("Basic認証設定時: 認証なしは401、正しい認証情報なら通�
     assert.equal((await ok.json()).service, "VisionOne");
 
     const bad = "Basic " + Buffer.from("me:wrong").toString("base64");
-    const ng = await fetch(`${url}/api/health`, { headers: { authorization: bad } });
+    const ng = await fetch(`${url}/api/state`, { headers: { authorization: bad } });
     assert.equal(ng.status, 401);
   } finally {
     await channel.stop();
