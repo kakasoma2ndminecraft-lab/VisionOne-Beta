@@ -1,0 +1,14 @@
+{
+  "name": "otomo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Instinct × GrokBot 中間コンセプトのプロトタイプ: マルチチャネル・マルチエージェントの個人アシスタント",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/"
+  }
+}
