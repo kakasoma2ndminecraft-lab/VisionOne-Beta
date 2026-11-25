@@ -12,11 +12,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEB_DIR = join(__dirname, "..", "..", "web");
 
 export class WebChatChannel {
-  constructor({ team, store, port = 8787, host = "127.0.0.1" } = {}) {
+  constructor({ team, store, port = 8787, host = "127.0.0.1", basicUser = null, basicPassword = null } = {}) {
     this.team = team;
     this.store = store;
     this.port = port;
     this.host = host;
+    this.basicUser = basicUser ?? process.env.VISIONONE_BASIC_USER ?? null;
+    this.basicPassword = basicPassword ?? process.env.VISIONONE_BASIC_PASSWORD ?? null;
     this.server = null;
   }
 
@@ -27,6 +29,8 @@ export class WebChatChannel {
   async start() {
     this.server = createServer((req, res) => this.route(req, res));
     await new Promise((resolve) => this.server.listen(this.port, this.host, resolve));
+    const addr = this.server.address();
+    this.port = typeof addr === "object" && addr ? addr.port : this.port;
     return `http://${this.host}:${this.port}`;
   }
 
@@ -38,10 +42,18 @@ export class WebChatChannel {
 
   route(req, res) {
     const url = new URL(req.url, "http://localhost");
-    const sendJson = (code, body) => {
-      res.writeHead(code, { "content-type": "application/json; charset=utf-8" });
+    const sendJson = (code, body, headers) => {
+      res.writeHead(code, { "content-type": "application/json; charset=utf-8", ...headers });
       res.end(JSON.stringify(body));
     };
+
+    // 公開サーバー用の鍵: VISIONONE_BASIC_USER/PASSWORD を設定すると
+    // ブラウザの標準的なログイン画面で保護される(未設定なら認証なし)
+    if (!this.checkBasicAuth(req)) {
+      res.writeHead(401, { "www-authenticate": 'Basic realm="VisionOne"' });
+      res.end("Authentication required");
+      return;
+    }
 
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
       res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
@@ -112,6 +124,23 @@ export class WebChatChannel {
     });
     await this.team.handle(envelope);
   }
+
+  checkBasicAuth(req) {
+    if (!this.basicUser || !this.basicPassword) return true;
+    const header = req.headers.authorization ?? "";
+    const m = /^Basic (.+)$/i.exec(header);
+    if (!m) return false;
+    const expected = Buffer.from(`${this.basicUser}:${this.basicPassword}`).toString("base64");
+    const got = m[1];
+    if (got.length !== expected.length) return false;
+    return timingSafeEqual(Buffer.from(got), Buffer.from(expected));
+  }
+}
+
+function timingSafeEqual(a, b) {
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
 }
 
 function readBody(req) {

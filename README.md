@@ -53,10 +53,24 @@ docker run -p 8787:8787 -v visionone-data:/app/.visionone-data visionone
 ```
 データ(会話・クッキー)は `.visionone-data/` に保存されるので、ボリュームマウントすればコンテナ再起動でも消えません。
 
-**4. クラウドに置いてどこからでもアクセスする(Render / Railway / Fly.io 等)**
-- このリポジトリを接続して Dockerfile を使えばそのままデプロイ可能
-- `/api/health` をヘルスチェックに指定
-- クッキー(vault.json)を扱うため、**公開するなら_basic認証やCloudflare Access等で守ること**を強く推奨
+**4. クラウドに置いてどこからでもアクセスする(Render / Railway / Fly.io)**
+
+設定ファイル(render.yaml / railway.json / fly.toml)は同梱済み。最有力のRenderでの手順:
+
+1. [render.com](https://render.com) にサインアップ(GitHubアカウントでOK)
+2. ダッシュボードで **New + → Blueprint** を選び、`VisionOne-Beta` リポジトリを接続
+   → `render.yaml` が自動で読まれる
+3. 環境変数の入力を求められたら入力:
+   - `VISIONONE_BASIC_USER` / `VISIONONE_BASIC_PASSWORD`: **必須。好きなIDとパスワード**(これがサイトの鍵になる)
+   - `VISIONONE_LLM_URL` / `VISIONONE_LLM_API_KEY`: あれば(任意)
+4. **Apply** → 数分でビルド&起動 → `https://visionone-beta-xxxx.onrender.com` のURLが発行される
+5. URLを開く → ブラウザ標準のID/パスワード画面が出る → 入力するとチャットUIが使える
+
+Railway / Fly.io は各ダッシュボード or CLI でリポジトリを接続するだけ(railway.json / fly.toml を同梱済み)。
+
+**注意:**
+- Renderなどの無料枠は**ディスクが一時的**(再デプロイで会話・クッキーが消える)。永続化したいなら(paid)ディスク追加 or Fly.io Volume `.visionone-data` をマウント
+- クッキー(vault.json)を扱うため、**Basic認証なしで公開するのは絶対にしないこと**
 - 常時動かしたいTelegram/iMessage連携は、常時起動のサーバー(クラウド or 家のMac)が必要
 
 ## アーキテクチャ
@@ -84,6 +98,7 @@ test/          node:test 9件
 | `VISIONONE_BLUEBUBBLES_URL` / `VISIONONE_BLUEBUBBLES_PASSWORD` | iMessage(BlueBubbles)接続。`VISIONONE_HOOK=1` で webhook サーバ起動 |
 | `VISIONONE_PCUSE_CMD` | 実PC-Useエンジン(stdin にタスクJSON、stdout に結果)。未設定なら scripted スタブ |
 | `VISIONONE_LLM_URL` / `VISIONONE_LLM_API_KEY` / `VISIONONE_LLM_MODEL` | OpenAI互換 API で応答品質を上げる(未設定なら Echo エンジン) |
+| `VISIONONE_BASIC_USER` / `VISIONONE_BASIC_PASSWORD` | 公開時にBasic認証を有効化(ブラウザにID/PW画面が出る)。未設定なら認証なし |
 
 ## HTTP API
 
