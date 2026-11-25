@@ -48,6 +48,10 @@ export class WebChatChannel {
       res.end(readFileSync(join(WEB_DIR, "index.html")));
       return;
     }
+    if (req.method === "GET" && url.pathname === "/api/health") {
+      sendJson(200, { ok: true, service: "VisionOne", threads: this.store.threads.size });
+      return;
+    }
     if (req.method === "GET" && url.pathname === "/api/state") {
       sendJson(200, this.state());
       return;

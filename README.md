@@ -29,6 +29,36 @@ Web UI で:
 5. Cookie Login 欄に `host` + `k=v; k2=v2`(または JSON / cookies.txt)で自動ログイン登録
 6. 会話とリアクションはスレッドごとに履歴保存(`.visionone-data/`)
 
+## Webとして動かす
+
+VisionOneは最初からWebアプリです(ブラウザUI + HTTP API)。3段階の動かし方:
+
+**1. 手元で動かす(ローカル)**
+```bash
+npm start   # → http://127.0.0.1:8787
+```
+
+**2. 同じWi-Fiのスマホ・別PCから動かす(LAN公開)**
+```bash
+VISIONONE_HOST=0.0.0.0 npm start
+# → http://<あなたのPCのIP>:8787 にアクセス
+```
+⚠ 注意: これで他の誰でもアクセスできるようになります。自宅Wi-Fiなど信頼できるネットワーク限定にすること。
+
+**3. Dockerで動かす(サーバー/クラウド)**
+```bash
+docker build -t visionone .
+docker run -p 8787:8787 -v visionone-data:/app/.visionone-data visionone
+# → http://localhost:8787
+```
+データ(会話・クッキー)は `.visionone-data/` に保存されるので、ボリュームマウントすればコンテナ再起動でも消えません。
+
+**4. クラウドに置いてどこからでもアクセスする(Render / Railway / Fly.io 等)**
+- このリポジトリを接続して Dockerfile を使えばそのままデプロイ可能
+- `/api/health` をヘルスチェックに指定
+- クッキー(vault.json)を扱うため、**公開するなら_basic認証やCloudflare Access等で守ること**を強く推奨
+- 常時動かしたいTelegram/iMessage連携は、常時起動のサーバー(クラウド or 家のMac)が必要
+
 ## アーキテクチャ
 
 ```
