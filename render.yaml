@@ -18,3 +18,5 @@ services:
         sync: false
       - key: VISIONONE_LLM_API_KEY
         sync: false
+      - key: VISIONONE_LLM_MODEL
+        sync: false
