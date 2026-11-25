@@ -9,7 +9,7 @@ import { EchoEngine } from "../src/agents/engine.js";
 import { Team } from "../src/agents/team.js";
 
 function makeDataDir() {
-  return mkdtempSync(join(tmpdir(), "otomo-team-"));
+  return mkdtempSync(join(tmpdir(), "visionone-team-"));
 }
 
 function personas(extraWorker) {

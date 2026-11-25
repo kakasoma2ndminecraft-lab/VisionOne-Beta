@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline";
 import { makeEnvelope } from "./envelope.js";
 
-// ターミナル REPL チャネル。OTOMO_CONSOLE=1 で有効化。
+// ターミナル REPL チャネル。VISIONONE_CONSOLE=1 で有効化。
 
 export class ConsoleChannel {
   constructor({ team, store, input = process.stdin, output = process.stdout } = {}) {
@@ -18,7 +18,7 @@ export class ConsoleChannel {
   }
 
   async start() {
-    this.output.write("otomo console (exit: /quit)\n> ");
+    this.output.write("VisionOne console (exit: /quit)\n> ");
     this.rl = createInterface({ input: this.input, terminal: false });
     this.rl.on("line", (line) => this.onLine(line.trim()));
     return "console ready";

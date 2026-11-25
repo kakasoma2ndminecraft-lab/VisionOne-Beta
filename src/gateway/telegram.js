@@ -1,6 +1,6 @@
 import { normalizeTelegram } from "./envelope.js";
 
-// Telegram チャネル(ロングポーリング)。OTOMO_TELEGRAM_TOKEN で有効化。
+// Telegram チャネル(ロングポーリング)。VISIONONE_TELEGRAM_TOKEN で有効化。
 // 将来の本格チャネル(絵文字リアクション付き)のリファレンス実装。
 
 const API = "https://api.telegram.org";
@@ -8,7 +8,7 @@ const API = "https://api.telegram.org";
 export class TelegramChannel {
   constructor({ team, token, onEnvelope, pollMs = 1500 } = {}) {
     this.team = team;
-    this.token = token ?? process.env.OTOMO_TELEGRAM_TOKEN ?? null;
+    this.token = token ?? process.env.VISIONONE_TELEGRAM_TOKEN ?? null;
     this.onEnvelope = onEnvelope;
     this.pollMs = pollMs;
     this.offset = 0;
@@ -24,7 +24,7 @@ export class TelegramChannel {
   }
 
   async start() {
-    if (!this.available) return "telegram disabled (no OTOMO_TELEGRAM_TOKEN)";
+    if (!this.available) return "telegram disabled (no VISIONONE_TELEGRAM_TOKEN)";
     this.running = true;
     this.loop().catch((err) => console.error("[telegram] poll error:", err.message));
     return "telegram polling started";

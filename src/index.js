@@ -10,12 +10,12 @@ import { IMessageChannel } from "./gateway/imessage.js";
 // 起動構成:
 //   リーダー: Aki (チーフ・オブ・スタッフ)
 //   ワーカー: Sora (リサーチ係) / Ren (手配係)
-// チャネル: WebChat(常時) / console(OTOMO_CONSOLE=1) /
-//           telegram(OTOMO_TELEGRAM_TOKEN) / imessage(OTOMO_BLUEBUBBLES_URL+PASSWORD)
+// チャネル: WebChat(常時) / console(VISIONONE_CONSOLE=1) /
+//           telegram(VISIONONE_TELEGRAM_TOKEN) / imessage(VISIONONE_BLUEBUBBLES_URL+PASSWORD)
 
-const PORT = Number(process.env.OTOMO_PORT ?? 8787);
-const HOST = process.env.OTOMO_HOST ?? "127.0.0.1";
-const DATA_DIR = process.env.OTOMO_DATA_DIR ?? ".otomo-data";
+const PORT = Number(process.env.VISIONONE_PORT ?? 8787);
+const HOST = process.env.VISIONONE_HOST ?? "127.0.0.1";
+const DATA_DIR = process.env.VISIONONE_DATA_DIR ?? ".visionone-data";
 
 const store = new SessionStore(DATA_DIR);
 const engine = new HttpEngine();
@@ -43,7 +43,7 @@ team.onOutbound = (outbound) => {
 const webchat = new WebChatChannel({ team, store, port: PORT, host: HOST });
 channels.push(webchat);
 
-if (process.env.OTOMO_CONSOLE === "1") {
+if (process.env.VISIONONE_CONSOLE === "1") {
   const consoleCh = new ConsoleChannel({ team, store });
   channels.push(consoleCh);
   relayChannels.push(consoleCh);
@@ -62,11 +62,11 @@ for (const ch of channels) {
   const status = await ch.start();
   console.log(`[channel:${ch.name}] ${status}`);
 }
-console.log(`\notomo ready -> http://${HOST}:${PORT}`);
+console.log(`\nVisionOne ready -> http://${HOST}:${PORT}`);
 console.log("cookie API: POST /api/cookies {host, cookies}");
 
-// BlueBubbles からの受信 webhook 用の軽量サーバ(OTOMO_HOOK=1 で起動)
-export function webhookServer(port = Number(process.env.OTOMO_HOOK_PORT ?? 8788)) {
+// BlueBubbles からの受信 webhook 用の軽量サーバ(VISIONONE_HOOK=1 で起動)
+export function webhookServer(port = Number(process.env.VISIONONE_HOOK_PORT ?? 8788)) {
   const server = createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/api/hooks/bluebubbles") {
       let raw = "";
@@ -84,9 +84,9 @@ export function webhookServer(port = Number(process.env.OTOMO_HOOK_PORT ?? 8788)
   return server.listen(port, HOST);
 }
 
-if (process.env.OTOMO_HOOK === "1") {
+if (process.env.VISIONONE_HOOK === "1") {
   webhookServer();
-  console.log(`[hooks] bluebubbles webhook on http://${HOST}:${process.env.OTOMO_HOOK_PORT ?? 8788}/api/hooks/bluebubbles`);
+  console.log(`[hooks] bluebubbles webhook on http://${HOST}:${process.env.VISIONONE_HOOK_PORT ?? 8788}/api/hooks/bluebubbles`);
 }
 
 process.on("SIGINT", async () => {

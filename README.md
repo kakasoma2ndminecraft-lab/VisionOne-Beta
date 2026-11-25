@@ -1,13 +1,13 @@
-# otomo 🛰 — チーム型パーソナルエージェント プロトタイプ
+# VisionOne 🛰 — チーム型パーソナルエージェント プロトタイプ
 
 **Instinct の「メッセンジャーらしい親密さ」** と **GrokBot の「チーム・クッキーログイン・強力な Computer Use」** の中間を目指す、マルチチャネル・マルチエージェントの個人アシスタントプロトタイプ。Node.js 標準ライブラリのみで動作(依存ゼロ)。
 
 ## Instinct / GrokBot の課題への対応
 
-| 課題 | otomo での実装 |
+| 課題 | visionone での実装 |
 |---|---|
 | Instinct: Messenger 以外から連絡できない | Gateway がエンベロープ形式に正規化 → WebChat / Console(動作) + Telegram / iMessage(アダプタ同梱) |
-| Instinct: PC-Use が Claude/OpenCode に劣る | 自前実装せず `OTOMO_PCUSE_CMD` で最強の PC-Use Skill を後段エンジン化(アダプタ点: `src/skills/computer-use.js`) |
+| Instinct: PC-Use が Claude/OpenCode に劣る | 自前実装せず `VISIONONE_PCUSE_CMD` で最強の PC-Use Skill を後段エンジン化(アダプタ点: `src/skills/computer-use.js`) |
 | Instinct: 相手が一人しかいない | リーダー(Aki) + ワーカー(Sora/Ren)のチーム。@指名ルーティングとリーダーによる委任 |
 | Instinct: 会話が1チャットのみ | スレッドごとに独立セッション(`src/store/session-store.js`)、UIでスレッド追加 |
 | Instinct: リアクションの人間味 | Bot が受信メッセージに絵文字リアクションを返す(envelope の第一級概念) |
@@ -27,7 +27,7 @@ Web UI で:
 3. `@Sora` `@Ren` で直接指名できる
 4. メッセージにボタンでリアクションを付けられる
 5. Cookie Login 欄に `host` + `k=v; k2=v2`(または JSON / cookies.txt)で自動ログイン登録
-6. 会話とリアクションはスレッドごとに履歴保存(`.otomo-data/`)
+6. 会話とリアクションはスレッドごとに履歴保存(`.visionone-data/`)
 
 ## アーキテクチャ
 
@@ -47,13 +47,13 @@ test/          node:test 9件
 
 | 変数 | 効果 |
 |---|---|
-| `OTOMO_PORT` / `OTOMO_HOST` | WebChat の待ち受け(既定 127.0.0.1:8787) |
-| `OTOMO_DATA_DIR` | スレッド/クッキー保存先(既定 `.otomo-data`) |
-| `OTOMO_CONSOLE=1` | ターミナル REPL チャネル有効化 |
-| `OTOMO_TELEGRAM_TOKEN` | Telegram ロングポーリング有効化 |
-| `OTOMO_BLUEBUBBLES_URL` / `OTOMO_BLUEBUBBLES_PASSWORD` | iMessage(BlueBubbles)接続。`OTOMO_HOOK=1` で webhook サーバ起動 |
-| `OTOMO_PCUSE_CMD` | 実PC-Useエンジン(stdin にタスクJSON、stdout に結果)。未設定なら scripted スタブ |
-| `OTOMO_LLM_URL` / `OTOMO_LLM_API_KEY` / `OTOMO_LLM_MODEL` | OpenAI互換 API で応答品質を上げる(未設定なら Echo エンジン) |
+| `VISIONONE_PORT` / `VISIONONE_HOST` | WebChat の待ち受け(既定 127.0.0.1:8787) |
+| `VISIONONE_DATA_DIR` | スレッド/クッキー保存先(既定 `.visionone-data`) |
+| `VISIONONE_CONSOLE=1` | ターミナル REPL チャネル有効化 |
+| `VISIONONE_TELEGRAM_TOKEN` | Telegram ロングポーリング有効化 |
+| `VISIONONE_BLUEBUBBLES_URL` / `VISIONONE_BLUEBUBBLES_PASSWORD` | iMessage(BlueBubbles)接続。`VISIONONE_HOOK=1` で webhook サーバ起動 |
+| `VISIONONE_PCUSE_CMD` | 実PC-Useエンジン(stdin にタスクJSON、stdout に結果)。未設定なら scripted スタブ |
+| `VISIONONE_LLM_URL` / `VISIONONE_LLM_API_KEY` / `VISIONONE_LLM_MODEL` | OpenAI互換 API で応答品質を上げる(未設定なら Echo エンジン) |
 
 ## HTTP API
 
@@ -62,11 +62,11 @@ test/          node:test 9件
 - `POST /api/messages` — `{threadId, text}` 送信
 - `POST /api/react` — `{threadId, messageId, emoji}` リアクション
 - `POST /api/cookies` — `{host, cookies}` クッキーログイン登録
-- `POST /api/hooks/bluebubbles` — iMessage 受信 webhook(`OTOMO_HOOK=1`)
+- `POST /api/hooks/bluebubbles` — iMessage 受信 webhook(`VISIONONE_HOOK=1`)
 
 ## 実運用への拡張ポイント(MVPロードマップ)
 
-1. **PC-Use 実エンジン接続**: `OTOMO_PCUSE_CMD` に OpenCode / Claude Code の PC-Use Skill ラッパを指定し、永続 VM 上で実行
+1. **PC-Use 実エンジン接続**: `VISIONONE_PCUSE_CMD` に OpenCode / Claude Code の PC-Use Skill ラッパを指定し、永続 VM 上で実行
 2. **チャネル拡張**: OpenClaw Gateway をチャネル背後に置けば LINE / Discord / Slack / Signal など 20+ チャネルを同一 envelope に統合可能
 3. **絵文字リアクションの実チャネル対応**: Telegram `setMessageReaction`、BlueBubbles tapback 送出など `send()` の type:"reaction" 分岐に追加
 4. **安全性**: 送信前プレビュー承認(`recipient + full body → yes`)を Team.emit 前に挿入するポリシーレイヤ

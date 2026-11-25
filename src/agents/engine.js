@@ -36,14 +36,14 @@ function truncate(text, n = 60) {
 }
 
 // OpenAI 互換 API への接続例(オプション):
-//   OTOMO_LLM_URL=https://api.example.com/v1/chat/completions
-//   OTOMO_LLM_API_KEY=... / OTOMO_LLM_MODEL=...
+//   VISIONONE_LLM_URL=https://api.example.com/v1/chat/completions
+//   VISIONONE_LLM_API_KEY=... / VISIONONE_LLM_MODEL=...
 export class HttpEngine extends EchoEngine {
   constructor(opts = {}) {
     super();
-    this.url = opts.url ?? process.env.OTOMO_LLM_URL ?? null;
-    this.apiKey = opts.apiKey ?? process.env.OTOMO_LLM_API_KEY ?? null;
-    this.model = opts.model ?? process.env.OTOMO_LLM_MODEL ?? "gpt-4o-mini";
+    this.url = opts.url ?? process.env.VISIONONE_LLM_URL ?? null;
+    this.apiKey = opts.apiKey ?? process.env.VISIONONE_LLM_API_KEY ?? null;
+    this.model = opts.model ?? process.env.VISIONONE_LLM_MODEL ?? "gpt-4o-mini";
   }
 
   get available() {

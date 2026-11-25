@@ -4,17 +4,17 @@ import { spawn } from "node:child_process";
 // Instinct の PC-Use 弱点への回答: 自前実装ではなく、既存で最強の
 // Claude Code / OpenCode の PC-Use Skill を後段エンジンとしてそのまま使う。
 //
-// - OTOMO_PCUSE_CMD が設定されていれば、コマンドの stdin にタスクJSONを渡し、
+// - VISIONONE_PCUSE_CMD が設定されていれば、コマンドの stdin にタスクJSONを渡し、
 //   stdout を実行結果として扱う(OpenCode / Claude PC-Use Skill へのアダプタ点)
 // - 未設定なら scripted ドライバでデモ動作する
 
 export class ComputerUse {
   constructor() {
-    this.cmd = process.env.OTOMO_PCUSE_CMD ?? null;
+    this.cmd = process.env.VISIONONE_PCUSE_CMD ?? null;
   }
 
   get engineName() {
-    return this.cmd ? "custom (OTOMO_PCUSE_CMD)" : "stub";
+    return this.cmd ? "custom (VISIONONE_PCUSE_CMD)" : "stub";
   }
 
   async run(task, { loginState = "guest" } = {}) {

@@ -6,10 +6,10 @@ import { join } from "node:path";
 // Instinct の「1つのチャット内でしか会話できない」問題への回答:
 // チャネル上のスレッド / グループ / プロジェクトごとに独立したセッションを持つ。
 
-const DEFAULT_DATA_DIR = ".otomo-data";
+const DEFAULT_DATA_DIR = ".visionone-data";
 
 export class SessionStore {
-  constructor(dataDir = process.env.OTOMO_DATA_DIR ?? DEFAULT_DATA_DIR) {
+  constructor(dataDir = process.env.VISIONONE_DATA_DIR ?? DEFAULT_DATA_DIR) {
     this.dataDir = dataDir;
     this.path = join(this.dataDir, "sessions.json");
     this.threads = new Map();

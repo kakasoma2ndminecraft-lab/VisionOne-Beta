@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 // ユーザーはログイン案内をせず、クッキーを貼るだけで Bot がログイン済み状態を作れる。
 // 注意: 実運用では 0600 のローカルファイル以上の保護(KMS 等)が必要。
 
-const DEFAULT_DATA_DIR = ".otomo-data";
+const DEFAULT_DATA_DIR = ".visionone-data";
 
 export function parseCookieInput(raw) {
   const text = (raw ?? "").trim();
@@ -47,7 +47,7 @@ export function parseCookieInput(raw) {
 }
 
 export class SessionVault {
-  constructor(dataDir = process.env.OTOMO_DATA_DIR ?? DEFAULT_DATA_DIR) {
+  constructor(dataDir = process.env.VISIONONE_DATA_DIR ?? DEFAULT_DATA_DIR) {
     this.path = join(dataDir, "vault.json");
     this.sessions = new Map();
     this.load();

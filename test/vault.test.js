@@ -24,7 +24,7 @@ test("parseCookieInput は3形式(header/JSON/Netscape)をパースする", () =
 });
 
 test("CookieLoginSkill はクッキー登録だけでログイン済み状態を作る", () => {
-  const dir = mkdtempSync(join(tmpdir(), "otomo-vault-"));
+  const dir = mkdtempSync(join(tmpdir(), "visionone-vault-"));
   try {
     const vault = new SessionVault(dir);
     const skill = new CookieLoginSkill(vault);
@@ -41,7 +41,7 @@ test("CookieLoginSkill はクッキー登録だけでログイン済み状態を
 });
 
 test("SessionVault は永続化され、erase で削除できる", () => {
-  const dir = mkdtempSync(join(tmpdir(), "otomo-vault2-"));
+  const dir = mkdtempSync(join(tmpdir(), "visionone-vault2-"));
   try {
     const vault = new SessionVault(dir);
     vault.importCookies("host:example.com", "a=1");

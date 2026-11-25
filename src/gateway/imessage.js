@@ -1,14 +1,14 @@
 import { normalizeBlueBubbles } from "./envelope.js";
 
 // iMessage チャネル (BlueBubbles REST ブリッジ経由)。
-// macOS + BlueBubbles サーバが必要。OTOMO_BLUEBUBBLES_URL / OTOMO_BLUEBUBBLES_PASSWORD。
+// macOS + BlueBubbles サーバが必要。VISIONONE_BLUEBUBBLES_URL / VISIONONE_BLUEBUBBLES_PASSWORD。
 // 受信は webhook (POST /api/hooks/bluebubbles) で受ける。
 
 export class IMessageChannel {
   constructor({ team, url, password, onEnvelope } = {}) {
     this.team = team;
-    this.url = url ?? process.env.OTOMO_BLUEBUBBLES_URL ?? null;
-    this.password = password ?? process.env.OTOMO_BLUEBUBBLES_PASSWORD ?? null;
+    this.url = url ?? process.env.VISIONONE_BLUEBUBBLES_URL ?? null;
+    this.password = password ?? process.env.VISIONONE_BLUEBUBBLES_PASSWORD ?? null;
     this.onEnvelope = onEnvelope;
   }
 
@@ -21,7 +21,7 @@ export class IMessageChannel {
   }
 
   async start() {
-    if (!this.available) return "imessage disabled (no OTOMO_BLUEBUBBLES_URL/PASSWORD)";
+    if (!this.available) return "imessage disabled (no VISIONONE_BLUEBUBBLES_URL/PASSWORD)";
     return "imessage bridge ready (webhook: POST /api/hooks/bluebubbles)";
   }
 
